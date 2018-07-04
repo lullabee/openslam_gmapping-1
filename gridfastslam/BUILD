@@ -1,5 +1,5 @@
 cc_library(
-    name = "gridflastslam",
+    name = "gridfastslam",
     srcs = glob([
 			"gfsreader.cpp",
 			"gfsreader.h",
