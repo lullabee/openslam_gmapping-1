@@ -16,6 +16,6 @@ cc_library(
    		"//scanmatcher",
    		"//sensor",
    		"//utils",
-    ]
+    ],
     visibility = ["//visibility:public"],
 )
