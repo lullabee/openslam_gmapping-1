@@ -3,7 +3,7 @@ cc_library(
   srcs = glob([
 			"*.cpp",
 			"*.hxx",
-			"*.h"], exclude = ["map_test.cpp", "graphmap.cpp"]),
+			"*.h"]),
    copts = ['-Wno-error'],
    visibility = ["//visibility:public"],
    include_prefix = "grid",

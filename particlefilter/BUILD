@@ -11,9 +11,3 @@ cc_library(
    		"//utils"
    ]
 )
-
-cc_binary(
-	name = "particlefilter_test",
-	srcs = ["particlefilter_test.cpp"],
-	deps = [":particlefilter"]
-)
