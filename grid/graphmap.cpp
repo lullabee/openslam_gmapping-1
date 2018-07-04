@@ -1,22 +1,23 @@
 #ifndef GRAPHMAP_H
 #define GRAPHMAP_H
 #include <list>
-#include <utils/point.h>
-#include <utils/graph.h>
-#include <grid/map.h>
+
+#include "utils/point.h"
+// #include "utils/graph.h"
+#include "map.h"
 
 namespace GMapping {
 
 class RasterMap;
 
 struct GraphMapPatch{
-	typedef typename std::list<IntPoint> PointList; 
+	typedef typename std::list<IntPoint> PointList;
 	/**Renders the map relatively to the center of the patch*/
 	//void render(RenderMap rmap);
 	/**returns the lower left corner of the patch, relative to the center*/
-	//Point minBoundary() const; 
+	//Point minBoundary() const;
 	/**returns the upper right corner of the patch, relative to the center*/
-	//Point maxBoundary() const; // 
+	//Point maxBoundary() const; //
 
 	OrientedPoint center;
 	PointList m_points;
@@ -39,7 +40,7 @@ struct GraphPatchGraph: public Graph<GraphMapPatch, Covariance3>{
 	void addEdge(Vertex* v1, Vertex* v2, const Covariance3& covariance);
 };
 
-void GraphPatchGraph::addEdge(GraphPatchGraph::Vertex* v1, GraphPatchGraph::VertexVertex* v2, 
+void GraphPatchGraph::addEdge(GraphPatchGraph::Vertex* v1, GraphPatchGraph::VertexVertex* v2,
 	const Covariance3& cov){
 	GraphMapEdge gme;
 	gme.covariance=cov;

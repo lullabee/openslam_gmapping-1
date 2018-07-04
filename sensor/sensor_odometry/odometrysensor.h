@@ -2,7 +2,7 @@
 #define ODOMETRYSENSOR_H
 
 #include <string>
-#include <sensor/sensor_base/sensor.h>
+#include "sensor/sensor_base/sensor.h"
 
 namespace GMapping{
 
@@ -11,7 +11,7 @@ class OdometrySensor: public Sensor{
 		OdometrySensor(const std::string& name, bool ideal=false);
 		inline bool isIdeal() const { return m_ideal; }
 	protected:
-		bool m_ideal;	
+		bool m_ideal;
 };
 
 };

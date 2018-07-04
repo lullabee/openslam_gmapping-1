@@ -1,3 +1,6 @@
+#include <vector>
+
+template <class State, class Numeric, class Particle>
 std::vector<unsigned int> sistematicResampler<State,Numeric>::resample(const vector<Particle>& particles) const{
 	Numeric cweight=0;
 
@@ -27,7 +30,7 @@ std::vector<unsigned int> sistematicResampler<State,Numeric>::resample(const vec
 		}
 	}
 	return indexes;
-	}
+}
 
 template <class Numeric>
 std::vector<unsigned int> indexResampler<Numeric>::resample(const vector<Numeric> >& weights) const{

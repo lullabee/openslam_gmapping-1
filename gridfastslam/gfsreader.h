@@ -6,14 +6,15 @@
 #include <sstream>
 #include <vector>
 #include <list>
-#include <utils/point.h>
+
+#include "utils/point.h"
 
 #define MAX_LINE_LENGHT (1000000)
 
 namespace GMapping{
 
 namespace GFSReader{
-	
+
 using namespace std;
 
 struct Record{

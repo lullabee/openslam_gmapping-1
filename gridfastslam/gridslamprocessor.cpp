@@ -5,7 +5,7 @@
 #include <set>
 #include <fstream>
 #include <iomanip>
-#include <utils/stat.h>
+#include "utils/stat.h"
 #include "gridslamprocessor.h"
 
 //#define MAP_CONSISTENCY_CHECK

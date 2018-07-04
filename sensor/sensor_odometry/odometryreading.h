@@ -2,9 +2,10 @@
 #define ODOMETRYREADING_H
 
 #include <string.h>
-#include <sensor/sensor_base/sensorreading.h>
-#include <utils/point.h>
+
 #include "odometrysensor.h"
+#include "sensor/sensor_base/sensorreading.h"
+#include "utils/point.h"
 
 namespace GMapping{
 
@@ -17,7 +18,7 @@ class OdometryReading: public SensorReading{
 		inline void setPose(const OrientedPoint& pose) {m_pose=pose;}
 		inline void setSpeed(const OrientedPoint& speed) {m_speed=speed;}
 		inline void setAcceleration(const OrientedPoint& acceleration) {m_acceleration=acceleration;}
-		
+
 	protected:
 		OrientedPoint m_pose;
 		OrientedPoint m_speed;

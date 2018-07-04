@@ -1,12 +1,11 @@
 #include "movement.h"
-#include "gvalues.h"
 
 namespace GMapping {
 
 
 FSRMovement::FSRMovement(double f, double s, double r) {
-  this->f = f;     
-  this->s = s;       
+  this->f = f;
+  this->s = s;
   this->r = r;
 }
 
@@ -27,7 +26,7 @@ void FSRMovement::normalize()
 {
   if (r >= -M_PI && r < M_PI)
     return;
-  
+
   int multiplier = (int)(r / (2*M_PI));
   r = r - multiplier*2*M_PI;
   if (r >= M_PI)
@@ -49,7 +48,7 @@ void FSRMovement::compose(const FSRMovement& move2) {
 }
 
 
-FSRMovement FSRMovement::composeMoves(const FSRMovement& move1, 
+FSRMovement FSRMovement::composeMoves(const FSRMovement& move1,
 				      const FSRMovement& move2) {
   FSRMovement comp;
   comp.f = cos(move1.r) * move2.f - sin(move1.r) * move2.s + move1.f;
@@ -68,7 +67,7 @@ OrientedPoint FSRMovement::movePoint(const OrientedPoint& pt, const FSRMovement&
   return pt2;
 }
 
-FSRMovement FSRMovement::moveBetweenPoints(const OrientedPoint& pt1, 
+FSRMovement FSRMovement::moveBetweenPoints(const OrientedPoint& pt1,
 					   const OrientedPoint& pt2) {
   FSRMovement move;
   move.f =   (pt2.y - pt1.y) * sin(pt1.theta) + (pt2.x - pt1.x) * cos(pt1.theta);
@@ -76,7 +75,7 @@ FSRMovement FSRMovement::moveBetweenPoints(const OrientedPoint& pt1,
   move.r = (pt2.theta - pt1.theta);
   move.normalize();
   return move;
-  
+
 }
 
 FSRMovement FSRMovement::invertMove(const FSRMovement& move1) {
@@ -89,7 +88,7 @@ FSRMovement FSRMovement::invertMove(const FSRMovement& move1) {
 }
 
 
-OrientedPoint FSRMovement::frameTransformation(const OrientedPoint& reference_pt_frame1, 
+OrientedPoint FSRMovement::frameTransformation(const OrientedPoint& reference_pt_frame1,
 					       const OrientedPoint& reference_pt_frame2,
 					       const OrientedPoint& pt_frame1) {
   OrientedPoint zero;
@@ -103,6 +102,6 @@ OrientedPoint FSRMovement::frameTransformation(const OrientedPoint& reference_pt
   FSRMovement tmp = composeMoves( composeMoves(trans_refp2, itrans_refp1), trans_pt);
   return tmp.move(zero);
 }
- 
+
 
 }

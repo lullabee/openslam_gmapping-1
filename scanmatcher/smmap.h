@@ -1,15 +1,17 @@
 #ifndef SMMAP_H
 #define SMMAP_H
-#include <grid/map.h>
-#include <grid/harray2d.h>
-#include <utils/point.h>
+
+#include "grid/map.h"
+#include "grid/harray2d.h"
+#include "utils/point.h"
+
 #define SIGHT_INC 1
 
 namespace GMapping {
 
 struct PointAccumulator{
 	typedef point<float> FloatPoint;
-	/* before 
+	/* before
 	PointAccumulator(int i=-1): acc(0,0), n(0), visits(0){assert(i==-1);}
 	*/
 	/*after begin*/
@@ -30,8 +32,8 @@ struct PointAccumulator{
 void PointAccumulator::update(bool value, const Point& p){
 	if (value) {
 		acc.x+= static_cast<float>(p.x);
-		acc.y+= static_cast<float>(p.y); 
-		n++; 
+		acc.y+= static_cast<float>(p.y);
+		n++;
 		visits+=SIGHT_INC;
 	} else
 		visits++;
@@ -51,4 +53,4 @@ typedef Map<PointAccumulator,HierarchicalArray2D<PointAccumulator> > ScanMatcher
 
 };
 
-#endif 
+#endif

@@ -1,9 +1,10 @@
 #ifndef MAP_H
 #define MAP_H
-#include <utils/point.h>
 #include <assert.h>
+
 #include "accessstate.h"
 #include "array2d.h"
+#include "utils/point.h"
 
 namespace GMapping {
 /**
@@ -12,7 +13,7 @@ The cells have to define (int) constructor;
 */
 typedef Array2D<double> DoubleArray2D;
 
-template <class Cell, class Storage, const bool isClass=true> 
+template <class Cell, class Storage, const bool isClass=true>
 class Map{
 	public:
 		Map(int mapSizeX, int mapSizeY, double delta);
@@ -25,12 +26,12 @@ class Map{
 		void grow(double xmin, double ymin, double xmax, double ymax);
 		inline IntPoint world2map(const Point& p) const;
 		inline Point map2world(const IntPoint& p) const;
-		inline IntPoint world2map(double x, double y) const 
+		inline IntPoint world2map(double x, double y) const
 		  { return world2map(Point(x,y)); }
-		inline Point map2world(int x, int y) const 
+		inline Point map2world(int x, int y) const
 		  { return map2world(IntPoint(x,y)); }
 
-		inline Point getCenter() const {return m_center;}	
+		inline Point getCenter() const {return m_center;}
 		inline double getWorldSizeX() const {return m_worldSizeX;}
 		inline double getWorldSizeY() const {return m_worldSizeY;}
 		inline int getMapSizeX() const {return m_mapSizeX;}
@@ -39,10 +40,10 @@ class Map{
 		inline double getMapResolution() const { return m_delta;}
 		inline double getResolution() const { return m_delta;}
 		inline void getSize(double & xmin, double& ymin, double& xmax, double& ymax) const {
-			Point min=map2world(0,0), max=map2world(IntPoint(m_mapSizeX-1, m_mapSizeY-1)); 
-			xmin=min.x, ymin=min.y,  xmax=max.x, ymax=max.y; 
+			Point min=map2world(0,0), max=map2world(IntPoint(m_mapSizeX-1, m_mapSizeY-1));
+			xmin=min.x, ymin=min.y,  xmax=max.x, ymax=max.y;
 		}
-		
+
 		inline Cell& cell(int x, int y) {
 		  return cell(IntPoint(x, y));
 		}
@@ -82,7 +83,7 @@ class Map{
 		inline const Storage& storage() const { return m_storage; }
 		DoubleArray2D* toDoubleArray() const;
 	        Map<double, DoubleArray2D, false>* toDoubleMap() const;
-		
+
 	protected:
 		Point m_center;
 		double m_worldSizeX, m_worldSizeY, m_delta;
@@ -133,7 +134,7 @@ Map<Cell,Storage,isClass>::Map(const Point& center, double xmin, double ymin, do
 	m_sizeX2=(int)round((m_center.x-xmin)/m_delta);
 	m_sizeY2=(int)round((m_center.y-ymin)/m_delta);
 }
-		
+
 template <class Cell, class Storage, const bool isClass>
 void Map<Cell,Storage,isClass>::resize(double xmin, double ymin, double xmax, double ymax){
 	IntPoint imin=world2map(xmin, ymin);
@@ -215,7 +216,7 @@ template <class Cell, class Storage, const bool isClass>
   const Cell& Map<Cell,Storage,isClass>::cell(const IntPoint& p) const {
   AccessibilityState s=m_storage.cellState(p);
   //if (! s&Inside) assert(0);
-  if (s&Allocated)	 
+  if (s&Allocated)
     return m_storage.cell(p);
   return m_unknown;
 }
@@ -225,7 +226,7 @@ const  Cell& Map<Cell,Storage,isClass>::cell(const Point& p) const {
   IntPoint ip=world2map(p);
   AccessibilityState s=m_storage.cellState(ip);
   //if (! s&Inside) assert(0);
-  if (s&Allocated)	 
+  if (s&Allocated)
     return m_storage.cell(ip);
   return  m_unknown;
 }

@@ -1,12 +1,13 @@
 #ifndef SCANMATCHER_H
 #define SCANMATCHER_H
 
+#include <iostream>
+
 #include "icp.h"
 #include "smmap.h"
-#include <utils/macro_params.h>
-#include <utils/stat.h>
-#include <iostream>
-#include <utils/gvalues.h>
+#include "utils/macro_params.h"
+#include "utils/stat.h"
+
 #define LASER_MAXBEAMS 1024
 
 namespace GMapping {
@@ -14,12 +15,12 @@ namespace GMapping {
 class ScanMatcher{
 	public:
 		typedef Covariance3 CovarianceMatrix;
-		
+
 		ScanMatcher();
 		double icpOptimize(OrientedPoint& pnew, const ScanMatcherMap& map, const OrientedPoint& p, const double* readings) const;
 		double optimize(OrientedPoint& pnew, const ScanMatcherMap& map, const OrientedPoint& p, const double* readings) const;
 		double optimize(OrientedPoint& mean, CovarianceMatrix& cov, const ScanMatcherMap& map, const OrientedPoint& p, const double* readings) const;
-		
+
 		double   registerScan(ScanMatcherMap& map, const OrientedPoint& p, const double* readings);
 		void setLaserParameters
 			(unsigned int beams, double* angles, const OrientedPoint& lpose);
@@ -35,12 +36,12 @@ class ScanMatcher{
 		double likelihood(double& _lmax, OrientedPoint& _mean, CovarianceMatrix& _cov, const ScanMatcherMap& map, const OrientedPoint& p, Gaussian3& odometry, const double* readings, double gain=180.);
 		inline const double* laserAngles() const { return m_laserAngles; }
 		inline unsigned int laserBeams() const { return m_laserBeams; }
-		
+
 		static const double nullLikelihood;
 	protected:
 		//state of the matcher
 		bool m_activeAreaComputed;
-		
+
 		/**laser parameters*/
 		unsigned int m_laserBeams;
 		double       m_laserAngles[LASER_MAXBEAMS];
@@ -78,7 +79,7 @@ inline double ScanMatcher::icpStep(OrientedPoint & pret, const ScanMatcherMap& m
 	unsigned int skip=0;
 	double freeDelta=map.getDelta()*m_freeCellRatio;
 	std::list<PointPair> pairs;
-	
+
 	for (const double* r=readings+m_initialBeamsSkip; r<readings+m_laserBeams; r++, angle++){
 		skip++;
 		skip=skip>m_likelihoodSkip?0:skip;
@@ -114,8 +115,8 @@ inline double ScanMatcher::icpStep(OrientedPoint & pret, const ScanMatcherMap& m
 						if((mu*mu)<(bestMu*bestMu)){
 							bestMu=mu;
 							bestCell=cell.mean();
-						} 
-						
+						}
+
 				}
 			//}
 		}
@@ -125,7 +126,7 @@ inline double ScanMatcher::icpStep(OrientedPoint & pret, const ScanMatcherMap& m
 		}
 		//std::cerr << std::endl;
 	}
-	
+
 	OrientedPoint result(0,0,0);
 	//double icpError=icpNonlinearStep(result,pairs);
 	std::cerr << "result(" << pairs.size() << ")=" << result.x << " " << result.y << " " << result.theta << std::endl;
@@ -230,7 +231,7 @@ inline unsigned int ScanMatcher::likelihoodAndScore(double& s, double& l, const 
 					}else
 						bestMu=(mu*mu)<(bestMu*bestMu)?mu:bestMu;
 				}
-			//}	
+			//}
 		}
 		if (found){
 			s+=exp(-1./m_gaussianSigma*bestMu*bestMu);

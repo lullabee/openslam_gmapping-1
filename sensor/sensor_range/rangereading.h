@@ -2,7 +2,8 @@
 #define RANGEREADING_H
 
 #include <vector>
-#include <sensor/sensor_base/sensorreading.h>
+
+#include "sensor/sensor_base/sensorreading.h"
 #include "rangesensor.h"
 
 namespace GMapping{

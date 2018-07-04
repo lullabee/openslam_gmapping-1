@@ -12,7 +12,7 @@ class FSRMovement  {
   FSRMovement(const FSRMovement& src);
   FSRMovement(const OrientedPoint& pt1, const OrientedPoint& pt2);
   FSRMovement(const FSRMovement& move1, const FSRMovement& move2);
-  
+
 
   void normalize();
   void invert();
@@ -24,15 +24,15 @@ class FSRMovement  {
 
   static OrientedPoint movePoint(const OrientedPoint& pt, const FSRMovement& move1);
 
-  static FSRMovement composeMoves(const FSRMovement& move1, 
+  static FSRMovement composeMoves(const FSRMovement& move1,
 				  const FSRMovement& move2);
-  
-  static FSRMovement moveBetweenPoints(const OrientedPoint& pt1, 
+
+  static FSRMovement moveBetweenPoints(const OrientedPoint& pt1,
 				       const OrientedPoint& pt2);
 
   static FSRMovement invertMove(const FSRMovement& move1);
 
-  static OrientedPoint frameTransformation(const OrientedPoint& reference_pt_frame1, 
+  static OrientedPoint frameTransformation(const OrientedPoint& reference_pt_frame1,
 					   const OrientedPoint& reference_pt_frame2,
 					   const OrientedPoint& pt_frame1);
 

@@ -2,7 +2,7 @@
 #define GRIDLINETRAVERSAL_H
 
 #include <cstdlib>
-#include <utils/point.h>
+#include "utils/point.h"
 
 namespace GMapping {
 
@@ -23,7 +23,7 @@ void GridLineTraversal::gridLineCore( IntPoint start, IntPoint end, GridLineTrav
   int cnt = 0;
 
   dx = abs(end.x-start.x); dy = abs(end.y-start.y);
-  
+
   if (dy <= dx) {
     d = 2*dy - dx; incr1 = 2 * dy; incr2 = 2 * (dy - dx);
     if (start.x > end.x) {
@@ -62,7 +62,7 @@ void GridLineTraversal::gridLineCore( IntPoint start, IntPoint end, GridLineTrav
 	line->points[cnt].y=y;
 	cnt++;
       }
-    }		
+    }
   } else {
     d = 2*dx - dy;
     incr1 = 2*dx; incr2 = 2 * (dx - dy);

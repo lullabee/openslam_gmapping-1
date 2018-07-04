@@ -1,9 +1,10 @@
-#include <cstring>
 #include "gfsreader.h"
+
+#include <cstring>
 #include <iomanip>
 #include <limits>
 
-namespace  GMapping { 
+namespace  GMapping {
 
 namespace GFSReader{
 
@@ -78,7 +79,7 @@ void RawOdometryRecord::read(istream& is){
   time = 0;
   assert(is);
     is >> time;
- 
+
 }
 
 
@@ -126,8 +127,8 @@ void LaserRecord::read(istream& is){
 void LaserRecord::write(ostream& os){
 	os << "WEIGHT " << weight << endl;
 	os << "ROBOTLASER1 ";
-	
-        
+
+
         if ((dim == 541)||(dim == 540)) { // S300
           os <<" 4";  // laser type
           os <<" -2.351831";  // start_angle
@@ -163,7 +164,7 @@ void LaserRecord::write(ostream& os){
           os <<" 0.017453";  // angular res
           os <<" 81.9" ;  // maxrange
         }
-	os <<" 0.01"; // accuracy	
+	os <<" 0.01"; // accuracy
 	os <<" 0" ;  // remission mode
 	os <<" "<< dim; // num readings
         os << setiosflags(ios::fixed) << setprecision(2);
@@ -239,7 +240,7 @@ istream& RecordList::read(istream& is){
 			rec=new EntropyRecord;
 //			cout << "c" << flush;
 		}
-		
+
 		if (rec){
 			rec->read(lineStream);
 			push_back(rec);
@@ -252,11 +253,11 @@ double RecordList::getLogWeight(unsigned int i) const{
 	double weight=0;
 	unsigned int currentIndex=i;
 	for(RecordList::const_reverse_iterator it=rbegin(); it!=rend(); it++){
-		ScanMatchRecord* scanmatch=dynamic_cast<ScanMatchRecord*>(*it); 
+		ScanMatchRecord* scanmatch=dynamic_cast<ScanMatchRecord*>(*it);
 		if (scanmatch){
 			weight+=scanmatch->weights[currentIndex];
 		}
-		ResampleRecord* resample=dynamic_cast<ResampleRecord*>(*it); 
+		ResampleRecord* resample=dynamic_cast<ResampleRecord*>(*it);
 		if (resample){
 			currentIndex=resample->indexes[currentIndex];
 		}
@@ -268,11 +269,11 @@ double RecordList::getLogWeight(unsigned int i, RecordList::const_iterator frame
 	double weight=0;
 	unsigned int currentIndex=i;
 	for(RecordList::const_reverse_iterator it(frame); it!=rend(); it++){
-		ScanMatchRecord* scanmatch=dynamic_cast<ScanMatchRecord*>(*it); 
+		ScanMatchRecord* scanmatch=dynamic_cast<ScanMatchRecord*>(*it);
 		if (scanmatch){
 			weight+=scanmatch->weights[currentIndex];
 		}
-		ResampleRecord* resample=dynamic_cast<ResampleRecord*>(*it); 
+		ResampleRecord* resample=dynamic_cast<ResampleRecord*>(*it);
 		if (resample){
 			currentIndex=resample->indexes[currentIndex];
 		}
@@ -286,7 +287,7 @@ unsigned int RecordList::getBestIdx() const {
 	const ScanMatchRecord* scanmatch=0;
 	const_reverse_iterator it=rbegin();
 	while(!scanmatch){
-		scanmatch=dynamic_cast<const ScanMatchRecord*>(*it); 
+		scanmatch=dynamic_cast<const ScanMatchRecord*>(*it);
 		it++;
 	}
 	unsigned int dim=scanmatch->dim;
@@ -309,7 +310,7 @@ void RecordList::printLastParticles(ostream& os) const {
 	const ScanMatchRecord* scanmatch=0;
 	const_reverse_iterator it=rbegin();
 	while(!scanmatch){
-		scanmatch=dynamic_cast<const ScanMatchRecord*>(*it); 
+		scanmatch=dynamic_cast<const ScanMatchRecord*>(*it);
 		it++;
 	}
 	if (! scanmatch)
@@ -322,29 +323,29 @@ void RecordList::printLastParticles(ostream& os) const {
 void RecordList::destroyReferences(){
 	for(RecordList::iterator it=begin(); it!=end(); it++)
 		delete (*it);
-	
+
 }
 
 RecordList RecordList::computePath(unsigned int i, RecordList::const_iterator frame) const{
 	unsigned int currentIndex=i;
 	OrientedPoint p(0,0,0);
 	RecordList rl;
-	
+
 	//reconstruct a  path
 	bool first=true;
 	for(RecordList::const_reverse_iterator it(frame); it!=rend(); it++){
-		const ScanMatchRecord* scanmatch=dynamic_cast<const ScanMatchRecord*>(*it); 
+		const ScanMatchRecord* scanmatch=dynamic_cast<const ScanMatchRecord*>(*it);
 		if (scanmatch){
 			p=scanmatch->poses[currentIndex];
 			first=false;
 		}
-		const LaserRecord* laser=dynamic_cast<const LaserRecord*>(*it); 
+		const LaserRecord* laser=dynamic_cast<const LaserRecord*>(*it);
 		if (laser && !first){
 			LaserRecord* claser=new LaserRecord(*laser);
 			claser->pose=p;
 			rl.push_front(claser);
 		}
-		const ResampleRecord* resample=dynamic_cast<const ResampleRecord*>(*it); 
+		const ResampleRecord* resample=dynamic_cast<const ResampleRecord*>(*it);
 		if (resample){
 			currentIndex=resample->indexes[currentIndex];
 		}
@@ -352,7 +353,7 @@ RecordList RecordList::computePath(unsigned int i, RecordList::const_iterator fr
 	return rl;
 }
 
-	
+
 void RecordList::printPath(ostream& os, unsigned int i, bool err, bool rawodom) const{
 	unsigned int currentIndex=i;
 	OrientedPoint p(0,0,0);
@@ -371,14 +372,14 @@ void RecordList::printPath(ostream& os, unsigned int i, bool err, bool rawodom) 
 		    EntropyRecord* n=new EntropyRecord(*entropy);
 		    rl.push_front(n);
 		}
-		const ScanMatchRecord* scanmatch=dynamic_cast<const ScanMatchRecord*>(*it); 
+		const ScanMatchRecord* scanmatch=dynamic_cast<const ScanMatchRecord*>(*it);
 		if (scanmatch){
 			PoseRecord* pose=new PoseRecord;
 			pose->dim=0;
 			p=pose->pose=scanmatch->poses[currentIndex];
 			w=scanmatch->weights[currentIndex]-oldWeight;
 			oldWeight=scanmatch->weights[currentIndex];
-			
+
 			if (!rawodom) {
 			  rl.push_front(pose);
 			}
@@ -408,24 +409,24 @@ void RecordList::printPath(ostream& os, unsigned int i, bool err, bool rawodom) 
 			PoseRecord* pose=new PoseRecord(*tpose);
 			rl.push_front(pose);
 		}
-		const LaserRecord* laser=dynamic_cast<const LaserRecord*>(*it); 
+		const LaserRecord* laser=dynamic_cast<const LaserRecord*>(*it);
 		if (laser){
 			LaserRecord* claser=new LaserRecord(*laser);
 			claser->pose=p;
 			claser->weight=w;
 			rl.push_front(claser);
 		}
-		const CommentRecord* comment=dynamic_cast<const CommentRecord*>(*it); 
+		const CommentRecord* comment=dynamic_cast<const CommentRecord*>(*it);
 		if (comment){
 			CommentRecord* ccomment=new CommentRecord(*comment);
 			rl.push_front(ccomment);
 		}
-		const ResampleRecord* resample=dynamic_cast<const ResampleRecord*>(*it); 
+		const ResampleRecord* resample=dynamic_cast<const ResampleRecord*>(*it);
 		if (resample){
 			rl.push_front(new ResampleRecord(*resample));
 			currentIndex=resample->indexes[currentIndex];
 		}
-		
+
 	}
 	bool started=false;
 	bool computedTransformation=false;
@@ -481,14 +482,14 @@ void RecordList::printPath(ostream& os, unsigned int i, bool err, bool rawodom) 
 						if (! err)
 							os << "# ERROR ";
 						os << neff << " "
-							<< ex << " " << ey << " " << eth 
+							<< ex << " " << ey << " " << eth
 							<< " " << sqrt(ex*ex+ey*ey) << " " << fabs(eth) << endl;
 						totalError+=sqrt(ex*ex+ey*ey);
 						count++;
 					}
 				}
 			}
-			
+
 		}
 		PoseRecord* pos=dynamic_cast<PoseRecord*>(*it);
 		if (pos)

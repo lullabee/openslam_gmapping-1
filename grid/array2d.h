@@ -2,10 +2,10 @@
 #define ARRAY2D_H
 
 #include <assert.h>
-#include <utils/point.h>
-#include "accessstate.h"
-
 #include <iostream>
+
+#include "utils/point.h"
+#include "accessstate.h"
 
 namespace GMapping {
 
@@ -17,18 +17,18 @@ template<class Cell, const bool debug=false> class Array2D{
 		~Array2D();
 		void clear();
 		void resize(int xmin, int ymin, int xmax, int ymax);
-		
-		
+
+
 		inline bool isInside(int x, int y) const;
 		inline const Cell& cell(int x, int y) const;
 		inline Cell& cell(int x, int y);
 		inline AccessibilityState cellState(int x, int y) const { return (AccessibilityState) (isInside(x,y)?(Inside|Allocated):Outside);}
-		
+
 		inline bool isInside(const IntPoint& p) const { return isInside(p.x, p.y);}
 		inline const Cell& cell(const IntPoint& p) const {return cell(p.x,p.y);}
 		inline Cell& cell(const IntPoint& p) {return cell(p.x,p.y);}
 		inline AccessibilityState cellState(const IntPoint& p) const { return cellState(p.x, p.y);}
-		
+
 		inline int getPatchSize() const{return 0;}
 		inline int getPatchMagnitude() const{return 0;}
 		inline int getXSize() const {return m_xsize;}
@@ -77,7 +77,7 @@ Array2D<Cell,debug> & Array2D<Cell,debug>::operator=(const Array2D<Cell,debug> &
 	for (int x=0; x<m_xsize; x++)
 		for (int y=0; y<m_ysize; y++)
 			m_cells[x][y]=g.m_cells[x][y];
-	
+
 	if (debug){
 		std::cerr << __PRETTY_FUNCTION__ << std::endl;
 		std::cerr << "m_xsize= " << m_xsize<< std::endl;
@@ -157,12 +157,12 @@ void Array2D<Cell,debug>::resize(int xmin, int ymin, int xmax, int ymax){
 	delete [] this->m_cells;
 	this->m_cells=newcells;
 	this->m_xsize=xsize;
-	this->m_ysize=ysize; 
+	this->m_ysize=ysize;
 }
 
 template <class Cell, const bool debug>
 inline bool Array2D<Cell,debug>::isInside(int x, int y) const{
-	return x>=0 && y>=0 && x<m_xsize && y<m_ysize; 
+	return x>=0 && y>=0 && x<m_xsize && y<m_ysize;
 }
 
 template <class Cell, const bool debug>
