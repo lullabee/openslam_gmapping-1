@@ -148,7 +148,7 @@ namespace GMapping {
 			       int iterations, double likelihoodSigma=1, double likelihoodGain=1, unsigned int likelihoodSkip=0);
     void setMotionModelParameters(double srr, double srt, double str, double stt);
     void setUpdateDistances(double linear, double angular, double resampleThreshold);
-
+  
     //the "core" algorithm
     void processTruePos(const OdometryReading& odometry);
     bool processScan(const RangeReading & reading, int adaptParticles=0);
