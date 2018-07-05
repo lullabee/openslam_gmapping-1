@@ -8,7 +8,7 @@
 #include "utils/macro_params.h"
 #include "utils/stat.h"
 
-#define LASER_MAXBEAMS 1024
+#define LASER_MAXBEAMS 2048
 
 namespace GMapping {
 

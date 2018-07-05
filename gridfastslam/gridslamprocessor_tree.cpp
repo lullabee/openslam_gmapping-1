@@ -118,78 +118,78 @@ GridSlamProcessor::TNodeVector GridSlamProcessor::getTrajectories() const{
 
 }
 
-void GridSlamProcessor::integrateScanSequence(GridSlamProcessor::TNode* node){
-	//reverse the list
-	TNode* aux=node;
-	TNode* reversed=0;
-	double count=0;
-	while(aux!=0){
-		TNode * newnode=new TNode(*aux);
-		newnode->parent=reversed;
-		reversed=newnode;
-		aux=aux->parent;
-		count++;
-	}
+// void GridSlamProcessor::integrateScanSequence(GridSlamProcessor::TNode* node){
+// 	//reverse the list
+// 	TNode* aux=node;
+// 	TNode* reversed=0;
+// 	double count=0;
+// 	while(aux!=0){
+// 		TNode * newnode=new TNode(*aux);
+// 		newnode->parent=reversed;
+// 		reversed=newnode;
+// 		aux=aux->parent;
+// 		count++;
+// 	}
 
-	//attach the path to each particle and compute the map;
-	if (m_infoStream )
-		m_infoStream << "Restoring State Nodes=" <<count << endl;
-
-
-	aux=reversed;
-	bool first=true;
-	double oldWeight=0;
-	OrientedPoint oldPose;
-	while (aux!=0){
-		if (first){
-			oldPose=aux->pose;
-			first=false;
-			oldWeight=aux->weight;
-		}
-
-		OrientedPoint dp=aux->pose-oldPose;
-		double dw=aux->weight-oldWeight;
-		oldPose=aux->pose;
+// 	//attach the path to each particle and compute the map;
+// 	if (m_infoStream )
+// 		m_infoStream << "Restoring State Nodes=" <<count << endl;
 
 
-		double * plainReading = new double[m_beams];
-		for(unsigned int i=0; i<m_beams; i++)
-			plainReading[i]=(*(aux->reading))[i];
+// 	aux=reversed;
+// 	bool first=true;
+// 	double oldWeight=0;
+// 	OrientedPoint oldPose;
+// 	while (aux!=0){
+// 		if (first){
+// 			oldPose=aux->pose;
+// 			first=false;
+// 			oldWeight=aux->weight;
+// 		}
 
-		for (ParticleVector::iterator it=m_particles.begin(); it!=m_particles.end(); it++){
-			//compute the position relative to the path;
-			double s=sin(oldPose.theta-it->pose.theta),
-			       c=cos(oldPose.theta-it->pose.theta);
+// 		OrientedPoint dp=aux->pose-oldPose;
+// 		double dw=aux->weight-oldWeight;
+// 		oldPose=aux->pose;
 
-			it->pose.x+=c*dp.x-s*dp.y;
-			it->pose.y+=s*dp.x+c*dp.y;
-			it->pose.theta+=dp.theta;
-			it->pose.theta=atan2(sin(it->pose.theta), cos(it->pose.theta));
 
-			//register the scan
-			m_matcher.invalidateActiveArea();
-			m_matcher.computeActiveArea(it->map, it->pose, plainReading);
-			it->weight+=dw;
-			it->weightSum+=dw;
+// 		double * plainReading = new double[m_beams];
+// 		for(unsigned int i=0; i<m_beams; i++)
+// 			plainReading[i]=(*(aux->reading))[i];
 
-			// this should not work, since it->weight is not the correct weight!
-			//			it->node=new TNode(it->pose, it->weight, it->node);
-			it->node=new TNode(it->pose, 0.0, it->node);
-			//update the weight
-		}
+// 		for (ParticleVector::iterator it=m_particles.begin(); it!=m_particles.end(); it++){
+// 			//compute the position relative to the path;
+// 			double s=sin(oldPose.theta-it->pose.theta),
+// 			       c=cos(oldPose.theta-it->pose.theta);
 
-		delete [] plainReading;
-		aux=aux->parent;
-	}
+// 			it->pose.x+=c*dp.x-s*dp.y;
+// 			it->pose.y+=s*dp.x+c*dp.y;
+// 			it->pose.theta+=dp.theta;
+// 			it->pose.theta=atan2(sin(it->pose.theta), cos(it->pose.theta));
 
-	//destroy the path
-	aux=reversed;
-	while (reversed){
-		aux=reversed;
-		reversed=reversed->parent;
-		delete aux;
-	}
-}
+// 			//register the scan
+// 			m_matcher.invalidateActiveArea();
+// 			m_matcher.computeActiveArea(it->map, it->pose, plainReading);
+// 			it->weight+=dw;
+// 			it->weightSum+=dw;
+
+// 			// this should not work, since it->weight is not the correct weight!
+// 			//			it->node=new TNode(it->pose, it->weight, it->node);
+// 			it->node=new TNode(it->pose, 0.0, it->node);
+// 			//update the weight
+// 		}
+
+// 		delete [] plainReading;
+// 		aux=aux->parent;
+// 	}
+
+// 	//destroy the path
+// 	aux=reversed;
+// 	while (reversed){
+// 		aux=reversed;
+// 		reversed=reversed->parent;
+// 		delete aux;
+// 	}
+// }
 
 //END State Save/Restore
 

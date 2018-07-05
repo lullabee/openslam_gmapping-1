@@ -13,10 +13,10 @@ inline void GridSlamProcessor::scanMatch(const double* plainReading){
   for (ParticleVector::iterator it=m_particles.begin(); it!=m_particles.end(); it++){
     OrientedPoint corrected;
     double score, l, s;
-    score=m_matcher.optimize(corrected, it->map, it->pose, plainReading);
-    //    it->pose=corrected;
+    score = m_matcher.optimize(corrected, it->map, it->pose, plainReading);
+
     if (score>m_minimumScore){
-      it->pose=corrected;
+      it->pose = corrected;
     } else {
     	if (m_infoStream){
     	  m_infoStream << "Scan Matching Failed, using odometry. Likelihood=" << l <<std::endl;
@@ -66,7 +66,7 @@ inline void GridSlamProcessor::normalize(){
 
 }
 
-inline bool GridSlamProcessor::resample(const double* plainReading, int adaptSize, const RangeReading* ){
+inline bool GridSlamProcessor::resample(const double* plainReading, int adaptSize, const RangeReading* reading){
 
   bool hasResampled = false;
 
@@ -75,10 +75,11 @@ inline bool GridSlamProcessor::resample(const double* plainReading, int adaptSiz
     oldGeneration.push_back(m_particles[i].node);
   }
 
-  if (m_neff<m_resampleThreshold*m_particles.size()){
-
-    if (m_infoStream)
+  std::cout << m_resampleThreshold*m_particles.size() << " == " << m_neff;
+  if (m_neff < m_resampleThreshold*m_particles.size()) {
+    if (m_infoStream) {
       m_infoStream  << "*************RESAMPLE***************" << std::endl;
+    }
 
     uniform_resampler<double, double> resampler;
     m_indexes=resampler.resampleIndexes(m_weights, adaptSize);
@@ -86,7 +87,7 @@ inline bool GridSlamProcessor::resample(const double* plainReading, int adaptSiz
     if (m_outputStream.is_open()){
       m_outputStream << "RESAMPLE "<< m_indexes.size() << " ";
       for (std::vector<unsigned int>::const_iterator it=m_indexes.begin(); it!=m_indexes.end(); it++){
-	m_outputStream << *it <<  " ";
+        m_outputStream << *it <<  " ";
       }
       m_outputStream << std::endl;
     }
@@ -95,23 +96,24 @@ inline bool GridSlamProcessor::resample(const double* plainReading, int adaptSiz
     //BEGIN: BUILDING TREE
     ParticleVector temp;
     unsigned int j=0;
-    std::vector<unsigned int> deletedParticles;  		//this is for deleteing the particles which have been resampled away.
+    std::vector<unsigned int> deletedParticles;  		//this is for deleting the particles which have been re-sampled away.
 
     //		cerr << "Existing Nodes:" ;
     for (unsigned int i=0; i<m_indexes.size(); i++){
       //			cerr << " " << m_indexes[i];
       while(j<m_indexes[i]){
-	deletedParticles.push_back(j);
-	j++;
+      	deletedParticles.push_back(j);
+      	j++;
 			}
-      if (j==m_indexes[i])
-	j++;
+      if (j==m_indexes[i]) {
+	      j++;
+      }
       Particle & p=m_particles[m_indexes[i]];
       TNode* node=0;
       TNode* oldNode=oldGeneration[m_indexes[i]];
       //			cerr << i << "->" << m_indexes[i] << "B("<<oldNode->childs <<") ";
       node=new	TNode(p.pose, 0, oldNode, 0);
-      node->reading=0;
+      node->reading = reading;
       //			cerr << "A("<<node->parent->childs <<") " <<endl;
 
       temp.push_back(p);
@@ -154,8 +156,8 @@ inline bool GridSlamProcessor::resample(const double* plainReading, int adaptSiz
       TNode* node=0;
       node=new TNode(it->pose, 0.0, *node_it, 0);
 
-      node->reading=0;
-      it->node=node;
+      node->reading = reading;
+      it->node = node;
 
       //END: BUILDING TREE
       m_matcher.invalidateActiveArea();

@@ -148,7 +148,7 @@ namespace GMapping {
 			       int iterations, double likelihoodSigma=1, double likelihoodGain=1, unsigned int likelihoodSkip=0);
     void setMotionModelParameters(double srr, double srt, double str, double stt);
     void setUpdateDistances(double linear, double angular, double resampleThreshold);
-  
+
     //the "core" algorithm
     void processTruePos(const OdometryReading& odometry);
     bool processScan(const RangeReading & reading, int adaptParticles=0);
@@ -159,7 +159,7 @@ namespace GMapping {
      @returns the leafs of the tree
     */
     TNodeVector getTrajectories() const;
-    void integrateScanSequence(TNode* node);
+    // void integrateScanSequence(TNode* node);
 
     /**the scanmatcher algorithm*/
     ScanMatcher m_matcher;

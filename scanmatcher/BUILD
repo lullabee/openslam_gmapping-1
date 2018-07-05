@@ -4,13 +4,13 @@ cc_library(
 			"*.cpp",
 			"*.h"
 		 ]),
-   copts = ['-Wno-error'],
+   copts = ['-Wno-error', "-DSCANMATHCERPROCESSOR_DEBUG"],
    visibility = ["//visibility:public"],
    include_prefix = "scanmatcher",
    deps = [
    		"//utils",
       "//grid",
       "//sensor"
-   ]
+   ],
 )
 
