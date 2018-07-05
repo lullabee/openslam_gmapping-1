@@ -1,23 +1,24 @@
 #ifndef DATASMOOTHER_H
 #define DATASMOOTHER_H
 
-#include <list>
-#include <stdio.h>
-#include <math.h>
-#include <values.h>
-#include "stat.h"
 #include <assert.h>
+#include <list>
+#include <math.h>
+#include <stdio.h>
+#include <values.h>
+
+#include "stat.h"
 
 namespace GMapping {
 
 class DataSmoother {
- public: 
+ public:
   struct DataPoint {
     DataPoint(double _x=0.0, double _y=0.0) { x=_x;y=_y;}
     double x;
     double y;
   };
-  
+
   typedef std::vector<DataPoint> Data;
 
   DataSmoother(double parzenWindow) {
@@ -32,7 +33,7 @@ class DataSmoother {
   void init(double parzenWindow) {
     m_data.clear();
     m_cummulated.clear();
-    m_int=-1; 
+    m_int=-1;
     m_parzenWindow = parzenWindow;
     m_from = MAXDOUBLE;
     m_to = -MAXDOUBLE;
@@ -65,7 +66,7 @@ class DataSmoother {
   void add(double x, double p) {
     m_data.push_back(DataPoint(x,p));
     m_int=-1;
-    
+
     if (x-3.0*m_parzenWindow < m_from)
       m_from = x - 3.0*m_parzenWindow;
 
@@ -74,7 +75,7 @@ class DataSmoother {
 
     m_cummulated.clear();
   }
-   
+
   void integrate(double step) {
     m_lastStep = step;
     double sum=0;
@@ -103,7 +104,7 @@ class DataSmoother {
       sum_y += d.y;
     }
     double denom = sqrt(2.0 * M_PI) * (sum_y) * m_parzenWindow;
-    p *= 1./denom; 
+    p *= 1./denom;
 
     return p;
   }
@@ -114,7 +115,7 @@ class DataSmoother {
 
     if (m_int <0 || step != m_lastStep)
       integrate(step);
-    
+
     double r = sampleUniformDouble(0.0, m_int);
     double sum2=0;
     for (double x=m_from; x<=m_to; x+=step) {
@@ -136,23 +137,23 @@ class DataSmoother {
       ++cit;
     }
   }
-  
+
   double sample() {
-    
+
     assert( m_data.size() > 0 );
-    
+
     if (m_cummulated.size() == 0) {
       computeCummuated();
     }
     double maxval = m_cummulated.back();
-    
+
     double random = sampleUniformDouble(0.0, maxval);
     int nCum = (int) m_cummulated.size();
     double sum=0;
     int i=0;
     while (i<nCum) {
       sum += m_cummulated[i];
-      
+
       if  (sum >= random) {
 	return m_data[i].x + sampleGaussian(m_parzenWindow);
       }
@@ -163,29 +164,29 @@ class DataSmoother {
 
 
   void sampleMultiple(std::vector<double>& samples, int num) {
-    
+
     assert( m_data.size() > 0 );
     samples.clear();
-    
+
     if (m_cummulated.size() == 0) {
       computeCummuated();
     }
     double maxval = m_cummulated.back();
-    
+
     std::vector<double> randoms(num);
     for (int i=0; i<num; i++)
       randoms[i] = sampleUniformDouble(0.0, maxval);
-    
+
     std::sort(randoms.begin(), randoms.end());
-    
+
     int nCum = (int) m_cummulated.size();
-    
+
     double sum=0;
     int i=0;
     int j=0;
     while (i<nCum && j < num) {
       sum += m_cummulated[i];
-      
+
       while (sum >= randoms[j] && j < num) {
 	samples.push_back( m_data[i].x + sampleGaussian(m_parzenWindow) );
 	j++;
@@ -226,13 +227,13 @@ class DataSmoother {
   }
 
   double cramerVonMisesToGauss(double step, double mean, double sigma) {
-    
+
     double p=0;
     double s=0;
     double g=0;
     double sint=0;
     double gint=0;
-    
+
     for (double x=m_from; x<=m_to; x+=step) {
       s = smoothedData(x);
       sint += s * step;
@@ -242,12 +243,12 @@ class DataSmoother {
 
       p += sqr( (sint - gint) );
     }
-    
+
     return p;
   }
 
   double kldToGauss(double step, double mean, double sigma) {
-    
+
     double p=0;
     double d=0;
     double g=0;
@@ -262,10 +263,10 @@ class DataSmoother {
 
       sd += d;
       sg += g;
-      
+
       p += d * log(d/g);
     }
-    
+
     sd *= step;
     sg *= step;
 
@@ -275,8 +276,8 @@ class DataSmoother {
     p *= step;
     return p;
   }
-  
-  
+
+
   void gnuplotDumpData(FILE* fp) {
     for (Data::const_iterator it = m_data.begin(); it != m_data.end(); it++) {
       const DataPoint& d = *it;
@@ -288,7 +289,7 @@ class DataSmoother {
     for (double x=m_from; x<=m_to; x+=step)
       fprintf(fp, "%f %f\n", x, smoothedData(x));
   }
-  
+
  protected:
   Data m_data;
   std::vector<double> m_cummulated;
@@ -318,7 +319,7 @@ class DataSmoother {
 /*     InputPoint p; */
 /*     double val; */
 /*   }; */
-  
+
 /*   typedef std::list<DataPoint> Data; */
 
 /*   DataSmoother(double parzenWindow) { */
@@ -355,7 +356,7 @@ class DataSmoother {
 /*   void add(double x, double y, double t, double v) { */
 /*     m_data.push_back(DataPoint(InputPoint(x,y,t),v)); */
 /*     m_int=-1; */
-    
+
 /*     if (x-3.0*m_parzenWindow < m_from.x) */
 /*       m_from.x = x - 3.0*m_parzenWindow.x; */
 /*     if (x+3.0*m_parzenWindow.x > m_to.x) */
@@ -371,7 +372,7 @@ class DataSmoother {
 /*     if (t+3.0*m_parzenWindow.t > m_to.t) */
 /*       m_to.t = t + 3.0*m_parzenWindow.t; */
 /*   } */
-   
+
 /*   void integrate(InputPoint step) { */
 /*     m_lastStep = step; */
 /*     double sum=0; */
@@ -401,7 +402,7 @@ class DataSmoother {
 /*     double denom = sqr(m_parzenWindow.x)*sqr(m_parzenWindow.x)*sqr(m_parzenWindow.x) * (sum_y) *  */
 /*       sqrt(sqr(m_parzenWindow.x) + sqr(m_parzenWindow.y) + sqr(m_parzenWindow.t)); */
 /*     p *= 1./denom;  */
-    
+
 /*     return p; */
 /*   } */
 
@@ -411,7 +412,7 @@ class DataSmoother {
 
 /*     if (m_int <0 || step != m_lastStep) */
 /*       integrate(step); */
-    
+
 /*     double r = sampleUniformDouble(0.0, m_int); */
 /*     double sum2=0; */
 /*     for (double x=m_from; x<=m_to; x+=step) { */
@@ -421,7 +422,7 @@ class DataSmoother {
 /*     } */
 /*     return m_to; */
 /*   } */
-  
+
 /*   void gnuplotDumpData(FILE* fp) { */
 /*     for (Data::const_iterator it = m_data.begin(); it != m_data.end(); it++) { */
 /*       const DataPoint& d = *it; */
