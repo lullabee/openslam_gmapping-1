@@ -285,7 +285,6 @@ void GridSlamProcessor::init(unsigned int size, double xmin, double ymin,
   }
 
   m_particles.clear();
-  TNode* node = new TNode(initialPose, 0, 0, 0);
   ScanMatcherMap lmap(Point(xmin + xmax, ymin + ymax) * .5, xmax - xmin,
                       ymax - ymin, delta);
   for (unsigned int i = 0; i < size; i++) {
@@ -294,6 +293,7 @@ void GridSlamProcessor::init(unsigned int size, double xmin, double ymin,
     m_particles.back().previousPose = initialPose;
     m_particles.back().setWeight(0);
     m_particles.back().previousIndex = 0;
+    TNode* node = new TNode(initialPose, 0, 0, 0);
     m_particles.back().node = node;
   }
   m_neff = (double)size;
