@@ -285,7 +285,6 @@ void GridSlamProcessor::init(unsigned int size, double xmin, double ymin,
   }
 
   m_particles.clear();
-  TNode* node = new TNode(initialPose, 0, 0, 0);
   ScanMatcherMap lmap(Point(xmin + xmax, ymin + ymax) * .5, xmax - xmin,
                       ymax - ymin, delta);
   for (unsigned int i = 0; i < size; i++) {
@@ -294,6 +293,7 @@ void GridSlamProcessor::init(unsigned int size, double xmin, double ymin,
     m_particles.back().previousPose = initialPose;
     m_particles.back().setWeight(0);
     m_particles.back().previousIndex = 0;
+    TNode* node = new TNode(initialPose, 0, 0, 0);
     m_particles.back().node = node;
   }
   m_neff = (double)size;
@@ -429,59 +429,43 @@ bool GridSlamProcessor::processScan(const RangeReading& reading,
         new RangeReading(reading.size(), &(reading[0]),
                          static_cast<const RangeSensor*>(reading.getSensor()),
                          reading.getTime());
-    if (m_count > 0) {
-      scanMatch(plainReading);
-      if (m_outputStream.is_open()) {
-        m_outputStream << "LASER_READING " << reading.size() << " ";
-        m_outputStream << setiosflags(ios::fixed) << setprecision(2);
-        for (RangeReading::const_iterator b = reading.begin();
-             b != reading.end(); b++) {
-          m_outputStream << *b << " ";
-        }
-        OrientedPoint p = reading.getPose();
-        m_outputStream << setiosflags(ios::fixed) << setprecision(6);
-        m_outputStream << p.x << " " << p.y << " " << p.theta << " "
-                       << reading.getTime() << endl;
-        m_outputStream << "SM_UPDATE " << m_particles.size() << " ";
-        for (ParticleVector::const_iterator it = m_particles.begin();
-             it != m_particles.end(); it++) {
-          const OrientedPoint& pose = it->pose;
-          m_outputStream << setiosflags(ios::fixed) << setprecision(3) << pose.x
-                         << " " << pose.y << " ";
-          m_outputStream << setiosflags(ios::fixed) << setprecision(6)
-                         << pose.theta << " " << it->weight << " ";
-        }
-        m_outputStream << endl;
+    scanMatch(plainReading);
+    if (m_outputStream.is_open()) {
+      m_outputStream << "LASER_READING " << reading.size() << " ";
+      m_outputStream << setiosflags(ios::fixed) << setprecision(2);
+      for (RangeReading::const_iterator b = reading.begin(); b != reading.end();
+           b++) {
+        m_outputStream << *b << " ";
       }
-
-      onScanmatchUpdate();
-
-      updateTreeWeights(false);
-
-      if (m_infoStream) {
-        m_infoStream << "neff= " << m_neff << endl;
-      }
-      if (m_outputStream.is_open()) {
-        m_outputStream << setiosflags(ios::fixed) << setprecision(6);
-        m_outputStream << "NEFF " << m_neff << endl;
-      }
-      resample(plainReading, adaptParticles, previous_reading);
-
-    } else {
-      m_infoStream << "Registering First Scan" << endl;
-      for (ParticleVector::iterator it = m_particles.begin();
+      OrientedPoint p = reading.getPose();
+      m_outputStream << setiosflags(ios::fixed) << setprecision(6);
+      m_outputStream << p.x << " " << p.y << " " << p.theta << " "
+                     << reading.getTime() << endl;
+      m_outputStream << "SM_UPDATE " << m_particles.size() << " ";
+      for (ParticleVector::const_iterator it = m_particles.begin();
            it != m_particles.end(); it++) {
-        m_matcher.invalidateActiveArea();
-        m_matcher.computeActiveArea(it->map, it->pose, plainReading);
-        m_matcher.registerScan(it->map, it->pose, plainReading);
-
-        // cyr: not needed anymore, particles refer to the root in the
-        // beginning!
-        TNode* node = new TNode(it->pose, 0., it->node, 0);
-        node->reading = previous_reading;
-        it->node = node;
+        const OrientedPoint &pose = it->pose;
+        m_outputStream << setiosflags(ios::fixed) << setprecision(3) << pose.x
+                       << " " << pose.y << " ";
+        m_outputStream << setiosflags(ios::fixed) << setprecision(6)
+                       << pose.theta << " " << it->weight << " ";
       }
+      m_outputStream << endl;
     }
+
+    onScanmatchUpdate();
+
+    updateTreeWeights(false);
+
+    if (m_infoStream) {
+      m_infoStream << "neff= " << m_neff << endl;
+    }
+    if (m_outputStream.is_open()) {
+      m_outputStream << setiosflags(ios::fixed) << setprecision(6);
+      m_outputStream << "NEFF " << m_neff << endl;
+    }
+    resample(plainReading, adaptParticles, previous_reading);
+
     updateTreeWeights(false);
 
     delete[] plainReading;
