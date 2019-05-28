@@ -21,7 +21,6 @@ RangeReading::RangeReading(unsigned int n_beams, const double* d, const RangeSen
 }
 
 RangeReading::~RangeReading(){
-//	cerr << __PRETTY_FUNCTION__ << ": CAZZZZZZZZZZZZZZZZZZZZOOOOOOOOOOO" << endl;
 }
 
 unsigned int RangeReading::rawView(double* v, double density) const{
@@ -40,7 +39,6 @@ unsigned int RangeReading::rawView(double* v, double density) const{
 			Point dp=lastPoint-lp;
 			double distance=sqrt(dp*dp);
 			if (distance<density){
-			  //				v[i]=MAXDOUBLE;
 				v[i]=std::numeric_limits<double>::max();
 				suppressed++;
 			}
@@ -48,43 +46,37 @@ unsigned int RangeReading::rawView(double* v, double density) const{
 				lastPoint=lp;
 				v[i]=(*this)[i];
 			}
-			//std::cerr<< __PRETTY_FUNCTION__ << std::endl;
-			//std::cerr<< "suppressed " << suppressed <<"/"<<size() << std::endl;
 		}
 	}
-	//	return size();
 	return static_cast<unsigned int>(size());
 
 };
 
-unsigned int RangeReading::activeBeams(double density) const{
+unsigned int RangeReading::activeBeams(double density) const {
 	if (density==0.)
 		return size();
-		int ab=0;
+	int ab=0;
 	Point lastPoint(0,0);
 	uint suppressed=0;
 	for (unsigned int i=0; i<size(); i++){
 		const RangeSensor* rs=dynamic_cast<const RangeSensor*>(getSensor());
 		assert(rs);
-		Point lp(
-			cos(rs->beams()[i].pose.theta)*(*this)[i],
-			sin(rs->beams()[i].pose.theta)*(*this)[i]);
+		Point lp(std::cos(rs->beams()[i].pose.theta)*(*this)[i],
+			     std::sin(rs->beams()[i].pose.theta)*(*this)[i]);
 		Point dp=lastPoint-lp;
 		double distance=sqrt(dp*dp);
-		if (distance<density){
+		if (distance<density) {
 			suppressed++;
 		}
-		else{
+		else {
 			lastPoint=lp;
 			ab++;
 		}
-		//std::cerr<< __PRETTY_FUNCTION__ << std::endl;
-		//std::cerr<< "suppressed " << suppressed <<"/"<<size() << std::endl;
 	}
 	return ab;
 }
 
-std::vector<Point> RangeReading::cartesianForm(double maxRange) const{
+std::vector<Point> RangeReading::cartesianForm(double maxRange) const {
 	const RangeSensor* rangeSensor=dynamic_cast<const RangeSensor*>(getSensor());
 	assert(rangeSensor && rangeSensor->beams().size());
 	//	uint m_beams=rangeSensor->beams().size();

@@ -12,7 +12,7 @@ namespace GMapping {
 class ScanMatcherProcessor{
 	public:
   ScanMatcherProcessor(const ScanMatcherMap& m);
-  ScanMatcherProcessor (double xmin, double ymin, double xmax, double ymax, double delta, double patchdelta);
+  ScanMatcherProcessor (double xmin, double ymin, double xmax, double ymax, double delta, double patchdelta, bool use_icp);
 		virtual ~ScanMatcherProcessor ();
 		virtual void processScan(const RangeReading & reading);
 		void setSensorMap(const SensorMap& smap, std::string sensorName="FLASER");
