@@ -13,7 +13,7 @@ inline void GridSlamProcessor::scanMatch(const double* plainReading){
   for (ParticleVector::iterator it=m_particles.begin(); it!=m_particles.end(); it++){
     OrientedPoint corrected;
     double score, l, s;
-    score = m_matcher.optimize(corrected, it->map, it->pose, plainReading);
+    score = m_matcher.icpOptimize(corrected, it->map, it->pose, plainReading);
 
     if (score>m_minimumScore){
       it->pose = corrected;
