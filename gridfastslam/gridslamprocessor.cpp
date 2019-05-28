@@ -524,4 +524,4 @@ void GridSlamProcessor::onScanmatchUpdate() {}
 void GridSlamProcessor::onResampleUpdate() {}
 void GridSlamProcessor::onOdometryUpdate() {}
 
-};  // end namespace
+};  // namespace GMapping
