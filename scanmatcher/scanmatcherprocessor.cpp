@@ -21,7 +21,7 @@ ScanMatcherProcessor::ScanMatcherProcessor(const ScanMatcherMap& m)
 
 
 ScanMatcherProcessor::ScanMatcherProcessor
-  (double xmin, double ymin, double xmax, double ymax, double delta, double patchdelta):
+  (double xmin, double ymin, double xmax, double ymax, double delta, double patchdelta, bool use_icp):
   m_map(Point((xmax+xmin)*.5, (ymax+ymin)*.5), xmax-xmin, ymax-ymin, patchdelta), m_pose(0,0,0){
   m_regScore=300;
   m_critScore=.5*m_regScore;
@@ -29,7 +29,7 @@ ScanMatcherProcessor::ScanMatcherProcessor
   m_beams=0;
   m_computeCovariance=false;
   //m_eigenspace=gsl_eigen_symmv_alloc(3);
-  useICP=false;
+  useICP=use_icp;
 }
 
 ScanMatcherProcessor::~ScanMatcherProcessor () {
