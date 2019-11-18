@@ -151,8 +151,6 @@ GridSlamProcessor* GridSlamProcessor::clone() const {
 }
 
 GridSlamProcessor::~GridSlamProcessor() {
-  cerr << __PRETTY_FUNCTION__ << ": Start" << endl;
-  cerr << __PRETTY_FUNCTION__ << ": Deeting tree" << endl;
   for (std::vector<Particle>::iterator it = m_particles.begin();
        it != m_particles.end(); it++) {
 #ifdef TREE_CONSISTENCY_CHECK
